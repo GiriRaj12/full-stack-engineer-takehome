@@ -12,7 +12,6 @@ export default function App() {
   const [backendURL, setBakendURL] = useState("http://localhost:3005");
 
   useEffect(() => {
-    console.log("localstorage", localStorage.getItem(USER_SESSION_NAME_KEY));
     setSessionUserName(localStorage.getItem(USER_SESSION_NAME_KEY) || "");
 
     const backenURL: string | undefined = process.env.BACKEND_URL;
@@ -21,12 +20,12 @@ export default function App() {
     else console.log("NO BACKEND URL DECLARED !");
   }, []);
 
-  const continueSessionAfterUserName = value => {
-    console.log("Continue session", value);
+  const continueSessionAfterUserName = (value: any) => {
     localStorage.setItem(USER_SESSION_NAME_KEY, value);
     setSessionUserName(value);
   };
 
+  // TODO : ADD ERROR BOUNDAY
   return (
     <Container maxWidth="md" style={{ marginTop: "5%" }}>
       <Typography style={{ width: "100%", textAlign: "center", margin: 5 }}>

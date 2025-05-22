@@ -18,6 +18,8 @@ import {
 import EditorComponent from "./EditorComponent";
 
 function AvailableNotesComponent(props) {
+
+  // TODO : Make notes as a context and pull wherever needed, or use Redux to store updates and reflect changes.
   const [notes, setNotes] = useState(Array<any>);
   const [errorMessage, setErrorMessage] = useState("");
   const [currentEditingNote, setCurrentEditingNote] = useState("");
@@ -57,12 +59,9 @@ function AvailableNotesComponent(props) {
       return;
     }
 
-    console.log(props.backendURL);
-
     fetch(`${props.backendURL}/api/notes`)
       .then(res => res.json())
       .then(response => {
-        console.log(response);
         setNotes(convertToKeyValueObject(response.response));
         setLoading(false);
       })
