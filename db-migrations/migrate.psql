@@ -1,1 +1,14 @@
 -- DB migration logic goes here if any
+
+
+CREATE TABLE IF NOT EXISTS editor_notes (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    created_by TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    body TEXT,
+    version INT,
+    is_active BOOLEAN,
+    note_id TEXT
+);

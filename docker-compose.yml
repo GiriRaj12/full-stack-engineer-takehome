@@ -2,13 +2,6 @@
 # Also, expecting future improvements to be updated in the README file
 version: "3"
 services:
-  app:
-    build: app
-    ports:
-      - "8080:8080"
-    networks:
-      - app-network
-
   postgresql:
     build: 
       context: ./db-migrations
@@ -16,21 +9,28 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "--dbname=editor", "--username=postgres"]
+      test: ["CMD", "pg_isready", "--dbname=editor", "--username=postgres_user"]
       interval: 10s
       timeout: 5s
       retries: 3
     networks:
       - app-network
+    volumes:
+      - postgresql_db_data:/var/lib/postgresql/data
 
   backend:
     build: 
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "5001:5001"
+      - "3005:3005"
     environment:
-      - DB_URL=postgres://postgres:password123@postgresql:5432/readcommend?sslmode=disable
+      - POSTGRESS_DB_USER_NAME=postgres_user
+      - POSTGRESS_DB_PASSWORD=password123
+      - POSTGRESS_DB_DATABASE=editor
+      - POSTGRESS_DB_HOST=postgresql
+      - POSTGRESS_DB_HOST_PORT= 5432
+      - DB_URL=postgres://postgres_user:password123@postgresql:5432/readcommend?sslmode=disable
     depends_on:
       - postgresql
     healthcheck:
@@ -40,8 +40,24 @@ services:
       retries: 3
     networks:
       - app-network
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - BACKEND_URL=http://localhost:3005
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      - postgresql
+      - backend
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgresql_db_data:
     
