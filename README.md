@@ -73,3 +73,8 @@ We do, understand that you may have a life (some people do). If you don't have t
 
 
 # Please enter your instructions below
+
+TO RUN APP 
+
+- {after getting to working directory } docker-compose up
+- localhost:8080 -> should pull up the application UI
