@@ -52,8 +52,7 @@ async function createNote(note: any): Promise<DB_Response> {
 
   const query: QUERY_STRUCTURE = {
     queryText: ` INSERT INTO ${BASE_TABLE_NAME} (id, name, created_by, created_at, body, note_id, is_active, version) 
-                     VALUES($1, $2, $3, $4, $5, $6, true, 1)
-        `,
+                     VALUES($1, $2, $3, $4, $5, $6, true, 1) RETURNING *`,
     values: [
       crypto.randomUUID().toString(),
       createNoteStructure.name,
@@ -65,10 +64,16 @@ async function createNote(note: any): Promise<DB_Response> {
   };
 
   dbResponse.response = await dbQueryWrapper(query);
-
   return dbResponse;
 }
 
+
+/**
+ * TODO: If update came through API
+ * 1. Update in DB 
+ * 2. Emit message in the namespace only if there is active users within the namespace  
+ ***/
+  
 // async function updateNote(note:UPDATE_NOTE_STRUCTURE){
 //     const dbResponse : DB_Response = {
 //         status: 200,
@@ -115,6 +120,17 @@ async function createNote(note: any): Promise<DB_Response> {
 
 // }
 
+
+/**
+ * 
+ * @param data 
+ * @returns 
+ * 
+ * TODO: Make function generic as to both useful for API and Socket to update notes
+ * 
+ */
+
+
 export async function updateNoteEventBySocket(data: {
   note_id: string;
   body: string;
@@ -135,9 +151,8 @@ export async function updateNoteEventBySocket(data: {
   console.log("Creating");
 
   const createQuery: QUERY_STRUCTURE = {
-    queryText: ` INSERT INTO ${BASE_TABLE_NAME} (id, name, created_by, created_at, body, note_id, version, is_active) 
-                     VALUES($1, $2, $3, $4, $5, $6, $7, true)
-        `,
+    queryText: `INSERT INTO ${BASE_TABLE_NAME} (id, name, created_by, created_at, body, note_id, version, is_active) 
+                     VALUES($1, $2, $3, $4, $5, $6, $7, true) RETURNING *`,
     values: [
       crypto.randomUUID().toString(),
       note["name"],
@@ -149,9 +164,7 @@ export async function updateNoteEventBySocket(data: {
     ],
   };
 
-  await dbQueryWrapper(createQuery);
-
-  return await getNoteById(note.note_id);
+  return await dbQueryWrapper(createQuery);
 }
 
 async function dbQueryWrapper(
