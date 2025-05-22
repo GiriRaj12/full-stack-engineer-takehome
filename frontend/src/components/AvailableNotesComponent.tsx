@@ -212,12 +212,13 @@ function AvailableNotesComponent(props) {
         {loading ? (
           <CircularProgress></CircularProgress>
         ) : (
-          <div>
+          <Container>
             <Button
               style={{ margin: 2 }}
               variant="contained"
               color="primary"
               onClick={getNotes}
+              disabled={currentEditingNote ? true: false}
             >
               Refresh Table
             </Button>
@@ -226,10 +227,11 @@ function AvailableNotesComponent(props) {
               variant="contained"
               color="primary"
               onClick={() => setDialogOpen(!dialogOpen)}
+              disabled={currentEditingNote ? true: false}
             >
               Create Note
             </Button>
-          </div>
+          </Container>
         )}
       </Container>
       {currentEditingNote ? (
